@@ -1,0 +1,1316 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Functionality Map Studio</title>
+
+<style>
+:root{
+  --bg:#0b1020;
+  --panel:#11182a;
+  --panel2:#182238;
+  --border:#26344d;
+  --text:#edf3ff;
+  --muted:#91a0ba;
+  --accent:#60a5fa;
+  --green:#34d399;
+  --purple:#a78bfa;
+  --orange:#fb923c;
+  --red:#f87171;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  overflow:hidden;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:1px solid var(--border);
+  color:var(--text);
+  background:var(--panel2);
+  border-radius:8px;
+  padding:9px 12px;
+  transition:.2s;
+}
+
+button:hover{
+  border-color:var(--accent);
+  background:#24344e;
+}
+
+button.primary{
+  background:#2563eb;
+  border-color:#2563eb;
+}
+
+button.danger{
+  color:#fecaca;
+}
+
+input,textarea,select{
+  background:#0c1425;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px;
+  width:100%;
+  outline:none;
+}
+
+input:focus,textarea:focus,select:focus{
+  border-color:var(--accent);
+}
+
+textarea{
+  resize:vertical;
+  min-height:75px;
+}
+
+.app{
+  display:grid;
+  grid-template-rows:64px 1fr;
+  height:100vh;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  border-bottom:1px solid var(--border);
+  background:#0e1526;
+  gap:12px;
+}
+
+.brand{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#2563eb,#8b5cf6);
+  font-size:20px;
+  font-weight:bold;
+}
+
+.brand h2{
+  font-size:16px;
+  margin:0;
+}
+
+.brand small{
+  color:var(--muted);
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.workspace{
+  display:grid;
+  grid-template-columns:250px 1fr 300px;
+  min-height:0;
+}
+
+.sidebar{
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  overflow:auto;
+  padding:15px;
+}
+
+.rightbar{
+  background:var(--panel);
+  border-left:1px solid var(--border);
+  overflow:auto;
+  padding:15px;
+}
+
+.section-title{
+  color:var(--muted);
+  text-transform:uppercase;
+  font-size:11px;
+  letter-spacing:1px;
+  margin:14px 0 10px;
+}
+
+.section-title:first-child{
+  margin-top:0;
+}
+
+.project-input{
+  margin-bottom:12px;
+}
+
+.tool-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.tool-btn{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:7px;
+  padding:12px;
+  text-align:left;
+  min-height:80px;
+}
+
+.tool-btn span:first-child{
+  font-size:20px;
+}
+
+.tool-btn small{
+  color:var(--muted);
+}
+
+.stat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.stat{
+  padding:12px;
+  border:1px solid var(--border);
+  background:#0c1425;
+  border-radius:10px;
+}
+
+.stat strong{
+  display:block;
+  font-size:23px;
+  margin-top:5px;
+}
+
+.stat small{
+  color:var(--muted);
+}
+
+.progress{
+  height:8px;
+  background:#26334a;
+  border-radius:10px;
+  overflow:hidden;
+  margin:10px 0;
+}
+
+.progress div{
+  height:100%;
+  background:linear-gradient(90deg,#60a5fa,#34d399);
+  width:0%;
+  transition:.3s;
+}
+
+.canvas-wrap{
+  position:relative;
+  min-width:0;
+  overflow:hidden;
+  background-color:#0b1020;
+  background-image:radial-gradient(#26344d 1px,transparent 1px);
+  background-size:22px 22px;
+}
+
+#canvas{
+  display:block;
+  width:100%;
+  height:100%;
+  touch-action:none;
+}
+
+.canvas-toolbar{
+  position:absolute;
+  bottom:16px;
+  left:16px;
+  display:flex;
+  gap:8px;
+  background:#11182ae8;
+  padding:8px;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.canvas-toolbar button{
+  padding:8px 11px;
+}
+
+.map-info{
+  position:absolute;
+  top:15px;
+  left:15px;
+  background:#11182ae8;
+  border:1px solid var(--border);
+  padding:10px 14px;
+  border-radius:10px;
+  pointer-events:none;
+}
+
+.map-info small{
+  color:var(--muted);
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px;
+}
+
+.node-list{
+  margin-top:12px;
+}
+
+.node-list-item{
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  margin-bottom:7px;
+  font-size:13px;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.node-list-item:hover{
+  background:var(--panel2);
+}
+
+.tag{
+  display:inline-block;
+  border-radius:20px;
+  font-size:10px;
+  padding:4px 7px;
+  background:#25344c;
+}
+
+.status-pending{color:#fbbf24}
+.status-progress{color:#60a5fa}
+.status-testing{color:#c084fc}
+.status-verified{color:#34d399}
+.status-failed{color:#f87171}
+
+.muted{
+  color:var(--muted);
+  font-size:12px;
+}
+
+hr{
+  border:0;
+  border-top:1px solid var(--border);
+  margin:16px 0;
+}
+
+.hidden{
+  display:none!important;
+}
+
+#fileInput{
+  display:none;
+}
+
+@media(max-width:1050px){
+  .workspace{
+    grid-template-columns:210px 1fr;
+  }
+  .rightbar{
+    display:none;
+  }
+}
+
+@media(max-width:650px){
+  .workspace{
+    grid-template-columns:1fr;
+  }
+  .sidebar{
+    display:none;
+  }
+  .topbar{
+    padding:8px;
+  }
+  .brand small{
+    display:none;
+  }
+  .top-actions button{
+    padding:7px;
+    font-size:12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">FM</div>
+    <div>
+      <h2>Functionality Map Studio</h2>
+      <small>Project logic visualization</small>
+    </div>
+  </div>
+
+  <div class="top-actions">
+    <button onclick="saveProject()">Save</button>
+    <button onclick="exportJSON()">JSON</button>
+    <button onclick="exportPNG()">PNG</button>
+    <button onclick="importJSON()">Import</button>
+    <button class="primary" onclick="newProject()">+ New</button>
+  </div>
+</header>
+
+<div class="workspace">
+
+<aside class="sidebar">
+
+<div class="section-title">Project</div>
+
+<div class="field">
+<label>Project Name</label>
+<input id="projectName" placeholder="Untitled Project">
+</div>
+
+<div class="field">
+<label>Description</label>
+<textarea id="projectDescription"
+placeholder="Describe the project"></textarea>
+</div>
+
+<button onclick="saveProject()" style="width:100%">
+Save Project
+</button>
+
+<hr>
+
+<div class="section-title">Add Node</div>
+
+<div class="tool-grid">
+
+<button class="tool-btn" onclick="addNode('module')">
+<span>📦</span>
+<small>Module</small>
+</button>
+
+<button class="tool-btn" onclick="addNode('feature')">
+<span>⚙️</span>
+<small>Feature</small>
+</button>
+
+<button class="tool-btn" onclick="addNode('condition')">
+<span>🔀</span>
+<small>Condition</small>
+</button>
+
+<button class="tool-btn" onclick="addNode('action')">
+<span>⚡</span>
+<small>Action</small>
+</button>
+
+<button class="tool-btn" onclick="addNode('database')">
+<span>🗄️</span>
+<small>Database</small>
+</button>
+
+<button class="tool-btn" onclick="addNode('testing')">
+<span>🧪</span>
+<small>Testing</small>
+</button>
+
+</div>
+
+<hr>
+
+<div class="section-title">Dashboard</div>
+
+<div class="stat-grid">
+
+<div class="stat">
+<small>Total Nodes</small>
+<strong id="totalNodes">0</strong>
+</div>
+
+<div class="stat">
+<small>Verified</small>
+<strong id="verifiedNodes">0</strong>
+</div>
+
+<div class="stat">
+<small>Connections</small>
+<strong id="totalLinks">0</strong>
+</div>
+
+<div class="stat">
+<small>Progress</small>
+<strong id="progressText">0%</strong>
+</div>
+
+</div>
+
+<div class="progress">
+<div id="progressBar"></div>
+</div>
+
+<hr>
+
+<div class="section-title">Node Overview</div>
+<div class="node-list" id="nodeList"></div>
+
+</aside>
+
+<main class="canvas-wrap" id="canvasWrap">
+
+<canvas id="canvas"></canvas>
+
+<div class="map-info">
+<strong id="canvasProjectName">Untitled Project</strong><br>
+<small id="zoomLabel">Zoom: 100%</small>
+</div>
+
+<div class="canvas-toolbar">
+<button onclick="zoomIn()">+</button>
+<button onclick="zoomOut()">−</button>
+<button onclick="fitMap()">Fit</button>
+<button onclick="toggleConnect()">Connect</button>
+<button onclick="deleteSelected()">Delete</button>
+</div>
+
+</main>
+
+<aside class="rightbar">
+
+<div class="section-title">Node Inspector</div>
+
+<div id="emptyInspector" class="muted">
+Select a node on the canvas to edit its properties.
+</div>
+
+<div id="inspector" class="hidden">
+
+<div class="field">
+<label>Node Name</label>
+<input id="editTitle">
+</div>
+
+<div class="field">
+<label>Type</label>
+<select id="editType">
+<option value="module">Module</option>
+<option value="feature">Feature</option>
+<option value="condition">Condition</option>
+<option value="action">Action</option>
+<option value="database">Database</option>
+<option value="testing">Testing</option>
+</select>
+</div>
+
+<div class="field">
+<label>Description</label>
+<textarea id="editDesc"></textarea>
+</div>
+
+<div class="field">
+<label>Logic / Workflow</label>
+<textarea id="editLogic"
+placeholder="Describe the internal logic"></textarea>
+</div>
+
+<div class="field">
+<label>Inputs</label>
+<textarea id="editInputs"
+placeholder="What data enters this node?"></textarea>
+</div>
+
+<div class="field">
+<label>Outputs</label>
+<textarea id="editOutputs"
+placeholder="What does this node produce?"></textarea>
+</div>
+
+<div class="field">
+<label>Dependencies</label>
+<textarea id="editDependencies"
+placeholder="Required modules or services"></textarea>
+</div>
+
+<div class="field">
+<label>Test Notes</label>
+<textarea id="editTest"
+placeholder="Test cases or test notes"></textarea>
+</div>
+
+<div class="field">
+<label>Status</label>
+<select id="editStatus">
+<option value="pending">Pending</option>
+<option value="progress">In Progress</option>
+<option value="testing">Testing</option>
+<option value="verified">Verified</option>
+<option value="failed">Failed</option>
+</select>
+</div>
+
+<button class="primary" onclick="applyInspector()"
+style="width:100%">
+Apply Changes
+</button>
+
+<button onclick="deleteSelected()"
+class="danger" style="width:100%;margin-top:8px">
+Delete Node
+</button>
+
+</div>
+
+<hr>
+
+<div class="section-title">Map Controls</div>
+
+<p class="muted">
+Drag nodes to reposition. Click a node to select it.
+</p>
+
+<p class="muted">
+Connect mode: select the first node, then the second node.
+</p>
+
+<button onclick="toggleConnect()" style="width:100%">
+Toggle Connect Mode
+</button>
+
+<button onclick="clearMap()" class="danger"
+style="width:100%;margin-top:10px">
+Clear Map
+</button>
+
+</aside>
+
+</div>
+</div>
+
+<input type="file" id="fileInput" accept=".json">
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const wrap = document.getElementById("canvasWrap");
+
+let nodes = [];
+let links = [];
+
+let selected = null;
+let connectMode = false;
+let connectStart = null;
+
+let camera = {x:0,y:0,zoom:1};
+
+let dragNode = null;
+let panStart = null;
+
+let nodeCounter = 0;
+
+const nodeColors = {
+ module:"#3b82f6",
+ feature:"#10b981",
+ condition:"#a78bfa",
+ action:"#f59e0b",
+ database:"#06b6d4",
+ testing:"#ec4899"
+};
+
+const nodeIcons = {
+ module:"📦",
+ feature:"⚙️",
+ condition:"🔀",
+ action:"⚡",
+ database:"🗄️",
+ testing:"🧪"
+};
+
+function resizeCanvas(){
+ const rect=wrap.getBoundingClientRect();
+ canvas.width=rect.width*devicePixelRatio;
+ canvas.height=rect.height*devicePixelRatio;
+ canvas.style.width=rect.width+"px";
+ canvas.style.height=rect.height+"px";
+ ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+ render();
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+function worldToScreen(x,y){
+ return {
+  x:x*camera.zoom+camera.x,
+  y:y*camera.zoom+camera.y
+ };
+}
+
+function screenToWorld(x,y){
+ return {
+  x:(x-camera.x)/camera.zoom,
+  y:(y-camera.y)/camera.zoom
+ };
+}
+
+function getPointer(e){
+ const r=canvas.getBoundingClientRect();
+ return {x:e.clientX-r.left,y:e.clientY-r.top};
+}
+
+function addNode(type){
+ nodeCounter++;
+
+ const p=screenToWorld(
+  canvas.clientWidth/2+(Math.random()*60-30),
+  canvas.clientHeight/2+(Math.random()*60-30)
+ );
+
+ const node={
+  id:"node_"+Date.now()+"_"+nodeCounter,
+  type,
+  title:type.charAt(0).toUpperCase()+type.slice(1)+" "+nodeCounter,
+  description:"",
+  logic:"",
+  inputs:"",
+  outputs:"",
+  dependencies:"",
+  testNotes:"",
+  status:"pending",
+  x:p.x,
+  y:p.y,
+  w:190,
+  h:115
+ };
+
+ nodes.push(node);
+ selected=node.id;
+
+ updateInspector();
+ updateDashboard();
+ render();
+ autosave();
+}
+
+function findNode(id){
+ return nodes.find(n=>n.id===id);
+}
+
+function render(){
+ if(!canvas.width)return;
+
+ ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
+
+ // Connections
+ links.forEach(link=>{
+  const a=findNode(link.from);
+  const b=findNode(link.to);
+
+  if(!a||!b)return;
+
+  const p1=worldToScreen(a.x+a.w/2,a.y+a.h/2);
+  const p2=worldToScreen(b.x+b.w/2,b.y+b.h/2);
+
+  ctx.beginPath();
+  ctx.moveTo(p1.x,p1.y);
+  ctx.lineTo(p2.x,p2.y);
+
+  ctx.strokeStyle="#64748b";
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  drawArrow(p1,p2);
+ });
+
+ // Nodes
+ nodes.forEach(n=>{
+  const p=worldToScreen(n.x,n.y);
+  const w=n.w*camera.zoom;
+  const h=n.h*camera.zoom;
+
+  ctx.fillStyle="#11182a";
+  ctx.strokeStyle=nodeColors[n.type]||"#64748b";
+  ctx.lineWidth=n.id===selected?3:1.5;
+
+  roundRect(ctx,p.x,p.y,w,h,12*camera.zoom);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle=nodeColors[n.type]||"#64748b";
+  roundRect(ctx,p.x,p.y,w,35*camera.zoom,10*camera.zoom);
+  ctx.fill();
+
+  ctx.fillStyle="#ffffff";
+  ctx.font=`${13*camera.zoom}px Arial`;
+  ctx.fillText(
+   nodeIcons[n.type]+" "+n.type.toUpperCase(),
+   p.x+10*camera.zoom,
+   p.y+23*camera.zoom
+  );
+
+  ctx.fillStyle="#edf3ff";
+  ctx.font=`bold ${14*camera.zoom}px Arial`;
+
+  const title=n.title.length>22
+    ? n.title.substring(0,22)+"..."
+    : n.title;
+
+  ctx.fillText(
+   title,
+   p.x+10*camera.zoom,
+   p.y+58*camera.zoom
+  );
+
+  ctx.fillStyle="#91a0ba";
+  ctx.font=`${11*camera.zoom}px Arial`;
+
+  ctx.fillText(
+   n.status.toUpperCase(),
+   p.x+10*camera.zoom,
+   p.y+78*camera.zoom
+  );
+
+  ctx.fillStyle="#34d399";
+
+  if(n.status==="verified"){
+   ctx.fillText("✓",p.x+w-22*camera.zoom,p.y+h-12*camera.zoom);
+  }
+ });
+}
+
+function roundRect(ctx,x,y,w,h,r){
+ ctx.beginPath();
+ ctx.moveTo(x+r,y);
+ ctx.arcTo(x+w,y,x+w,y+h,r);
+ ctx.arcTo(x+w,y+h,x,y+h,r);
+ ctx.arcTo(x,y+h,x,y,r);
+ ctx.arcTo(x,y,x+w,y,r);
+ ctx.closePath();
+}
+
+function drawArrow(a,b){
+ const angle=Math.atan2(b.y-a.y,b.x-a.x);
+ const length=10;
+
+ const x=b.x-Math.cos(angle)*15;
+ const y=b.y-Math.sin(angle)*15;
+
+ ctx.beginPath();
+ ctx.moveTo(x,y);
+ ctx.lineTo(
+  x-length*Math.cos(angle-.5),
+  y-length*Math.sin(angle-.5)
+ );
+ ctx.lineTo(
+  x-length*Math.cos(angle+.5),
+  y-length*Math.sin(angle+.5)
+ );
+ ctx.closePath();
+
+ ctx.fillStyle="#94a3b8";
+ ctx.fill();
+}
+
+function hitNode(x,y){
+ for(let i=nodes.length-1;i>=0;i--){
+  const n=nodes[i];
+  if(x>=n.x&&x<=n.x+n.w&&y>=n.y&&y<=n.y+n.h)
+   return n;
+ }
+ return null;
+}
+
+canvas.addEventListener("pointerdown",e=>{
+ const p=getPointer(e);
+ const w=screenToWorld(p.x,p.y);
+ const n=hitNode(w.x,w.y);
+
+ if(n){
+  if(connectMode){
+   if(!connectStart){
+    connectStart=n.id;
+    selected=n.id;
+   }else{
+    if(connectStart!==n.id &&
+      !links.some(l=>l.from===connectStart&&l.to===n.id)){
+      links.push({from:connectStart,to:n.id});
+    }
+    connectStart=null;
+   }
+   updateInspector();
+   render();
+   autosave();
+   return;
+  }
+
+  selected=n.id;
+  dragNode=n;
+  updateInspector();
+  render();
+  return;
+ }
+
+ selected=null;
+ dragNode=null;
+
+ panStart={
+  x:p.x,
+  y:p.y,
+  cx:camera.x,
+  cy:camera.y
+ };
+
+ updateInspector();
+ render();
+});
+
+canvas.addEventListener("pointermove",e=>{
+ const p=getPointer(e);
+
+ if(dragNode){
+  const w=screenToWorld(p.x,p.y);
+  dragNode.x=w.x-dragNode.w/2;
+  dragNode.y=w.y-dragNode.h/2;
+  render();
+  return;
+ }
+
+ if(panStart){
+  camera.x=panStart.cx+(p.x-panStart.x);
+  camera.y=panStart.cy+(p.y-panStart.y);
+  render();
+ }
+});
+
+canvas.addEventListener("pointerup",()=>{
+ if(dragNode)autosave();
+ dragNode=null;
+ panStart=null;
+});
+
+canvas.addEventListener("pointercancel",()=>{
+ dragNode=null;
+ panStart=null;
+});
+
+canvas.addEventListener("wheel",e=>{
+ e.preventDefault();
+
+ const p=getPointer(e);
+ const before=screenToWorld(p.x,p.y);
+
+ camera.zoom*=e.deltaY<0?1.1:.9;
+ camera.zoom=Math.max(.2,Math.min(3,camera.zoom));
+
+ camera.x=p.x-before.x*camera.zoom;
+ camera.y=p.y-before.y*camera.zoom;
+
+ document.getElementById("zoomLabel").textContent=
+ "Zoom: "+Math.round(camera.zoom*100)+"%";
+
+ render();
+},{passive:false});
+
+function zoomIn(){
+ camera.zoom=Math.min(3,camera.zoom*1.2);
+ render();
+}
+
+function zoomOut(){
+ camera.zoom=Math.max(.2,camera.zoom/1.2);
+ render();
+}
+
+function fitMap(){
+ if(nodes.length===0){
+  camera={x:canvas.clientWidth/2,y:canvas.clientHeight/2,zoom:1};
+  render();
+  return;
+ }
+
+ const minX=Math.min(...nodes.map(n=>n.x));
+ const minY=Math.min(...nodes.map(n=>n.y));
+ const maxX=Math.max(...nodes.map(n=>n.x+n.w));
+ const maxY=Math.max(...nodes.map(n=>n.y+n.h));
+
+ const width=maxX-minX;
+ const height=maxY-minY;
+
+ const padding=100;
+
+ camera.zoom=Math.min(
+  (canvas.clientWidth-padding)/Math.max(width,1),
+  (canvas.clientHeight-padding)/Math.max(height,1),
+  1.5
+ );
+
+ camera.x=(canvas.clientWidth-width*camera.zoom)/2-minX*camera.zoom;
+ camera.y=(canvas.clientHeight-height*camera.zoom)/2-minY*camera.zoom;
+
+ render();
+}
+
+function toggleConnect(){
+ connectMode=!connectMode;
+ connectStart=null;
+
+ alert(connectMode
+  ? "Connect mode ON. Select first node, then second node."
+  : "Connect mode OFF.");
+
+ render();
+}
+
+function updateInspector(){
+ const n=findNode(selected);
+
+ document.getElementById("emptyInspector").classList.toggle("hidden",!!n);
+ document.getElementById("inspector").classList.toggle("hidden",!n);
+
+ if(!n)return;
+
+ document.getElementById("editTitle").value=n.title;
+ document.getElementById("editType").value=n.type;
+ document.getElementById("editDesc").value=n.description;
+ document.getElementById("editLogic").value=n.logic;
+ document.getElementById("editInputs").value=n.inputs;
+ document.getElementById("editOutputs").value=n.outputs;
+ document.getElementById("editDependencies").value=n.dependencies;
+ document.getElementById("editTest").value=n.testNotes;
+ document.getElementById("editStatus").value=n.status;
+}
+
+function applyInspector(){
+ const n=findNode(selected);
+ if(!n)return;
+
+ n.title=document.getElementById("editTitle").value;
+ n.type=document.getElementById("editType").value;
+ n.description=document.getElementById("editDesc").value;
+ n.logic=document.getElementById("editLogic").value;
+ n.inputs=document.getElementById("editInputs").value;
+ n.outputs=document.getElementById("editOutputs").value;
+ n.dependencies=document.getElementById("editDependencies").value;
+ n.testNotes=document.getElementById("editTest").value;
+ n.status=document.getElementById("editStatus").value;
+
+ updateDashboard();
+ render();
+ autosave();
+}
+
+function deleteSelected(){
+ if(!selected)return;
+
+ nodes=nodes.filter(n=>n.id!==selected);
+ links=links.filter(l=>l.from!==selected&&l.to!==selected);
+
+ selected=null;
+ connectStart=null;
+
+ updateInspector();
+ updateDashboard();
+ render();
+ autosave();
+}
+
+function clearMap(){
+ if(!confirm("Clear all nodes and connections?"))return;
+
+ nodes=[];
+ links=[];
+ selected=null;
+ connectStart=null;
+
+ updateInspector();
+ updateDashboard();
+ render();
+ autosave();
+}
+
+function updateDashboard(){
+ document.getElementById("totalNodes").textContent=nodes.length;
+ document.getElementById("verifiedNodes").textContent=
+ nodes.filter(n=>n.status==="verified").length;
+ document.getElementById("totalLinks").textContent=links.length;
+
+ const verified=nodes.filter(n=>n.status==="verified").length;
+ const progress=nodes.length?Math.round(verified/nodes.length*100):0;
+
+ document.getElementById("progressText").textContent=progress+"%";
+ document.getElementById("progressBar").style.width=progress+"%";
+
+ const list=document.getElementById("nodeList");
+ list.innerHTML="";
+
+ nodes.forEach(n=>{
+  const item=document.createElement("div");
+  item.className="node-list-item";
+
+  item.innerHTML=`
+    <span>${escapeHTML(n.title)}</span>
+    <span class="tag status-${n.status}">${n.status}</span>
+  `;
+
+  item.onclick=()=>{
+   selected=n.id;
+   updateInspector();
+   render();
+  };
+
+  list.appendChild(item);
+ });
+}
+
+function escapeHTML(str){
+ return String(str||"").replace(/[&<>"']/g,m=>{
+  return {
+   "&":"&amp;",
+   "<":"&lt;",
+   ">":"&gt;",
+   '"':"&quot;",
+   "'":"&#39;"
+  }[m];
+ });
+}
+
+function getProject(){
+ return {
+  app:"Functionality Map Studio",
+  version:1,
+  projectName:document.getElementById("projectName").value,
+  description:document.getElementById("projectDescription").value,
+  nodes,
+  links,
+  savedAt:new Date().toISOString()
+ };
+}
+
+function saveProject(){
+ const data=getProject();
+
+ localStorage.setItem("fmap_project",JSON.stringify(data));
+
+ alert("Project saved in this browser.");
+}
+
+function autosave(){
+ try{
+  localStorage.setItem("fmap_project",JSON.stringify(getProject()));
+ }catch(e){}
+}
+
+function loadProject(data){
+ nodes=Array.isArray(data.nodes)?data.nodes:[];
+ links=Array.isArray(data.links)?data.links:[];
+
+ document.getElementById("projectName").value=
+ data.projectName||"Untitled Project";
+
+ document.getElementById("projectDescription").value=
+ data.description||"";
+
+ document.getElementById("canvasProjectName").textContent=
+ data.projectName||"Untitled Project";
+
+ selected=null;
+ connectStart=null;
+
+ updateInspector();
+ updateDashboard();
+ render();
+ fitMap();
+}
+
+function exportJSON(){
+ const data=JSON.stringify(getProject(),null,2);
+
+ const blob=new Blob([data],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+
+ const a=document.createElement("a");
+ a.href=url;
+ a.download="functionality-map.json";
+ a.click();
+
+ URL.revokeObjectURL(url);
+}
+
+function importJSON(){
+ document.getElementById("fileInput").click();
+}
+
+document.getElementById("fileInput").addEventListener("change",e=>{
+ const file=e.target.files[0];
+ if(!file)return;
+
+ const reader=new FileReader();
+
+ reader.onload=()=>{
+  try{
+   const data=JSON.parse(reader.result);
+   loadProject(data);
+   autosave();
+  }catch(err){
+   alert("Invalid project file.");
+  }
+ };
+
+ reader.readAsText(file);
+ e.target.value="";
+});
+
+function exportPNG(){
+ const padding=80;
+
+ if(nodes.length===0){
+  alert("Add nodes before exporting.");
+  return;
+ }
+
+ const minX=Math.min(...nodes.map(n=>n.x));
+ const minY=Math.min(...nodes.map(n=>n.y));
+ const maxX=Math.max(...nodes.map(n=>n.x+n.w));
+ const maxY=Math.max(...nodes.map(n=>n.y+n.h));
+
+ const c=document.createElement("canvas");
+ c.width=maxX-minX+padding*2;
+ c.height=maxY-minY+padding*2;
+
+ const x=c.getContext("2d");
+
+ x.fillStyle="#0b1020";
+ x.fillRect(0,0,c.width,c.height);
+
+ links.forEach(l=>{
+  const a=findNode(l.from);
+  const b=findNode(l.to);
+  if(!a||!b)return;
+
+  const p1={x:a.x+a.w/2-minX+padding,
+            y:a.y+a.h/2-minY+padding};
+  const p2={x:b.x+b.w/2-minX+padding,
+            y:b.y+b.h/2-minY+padding};
+
+  x.strokeStyle="#64748b";
+  x.lineWidth=2;
+  x.beginPath();
+  x.moveTo(p1.x,p1.y);
+  x.lineTo(p2.x,p2.y);
+  x.stroke();
+ });
+
+ nodes.forEach(n=>{
+  const px=n.x-minX+padding;
+  const py=n.y-minY+padding;
+
+  x.fillStyle="#11182a";
+  x.strokeStyle=nodeColors[n.type];
+  x.lineWidth=2;
+
+  roundRect(x,px,py,n.w,n.h,12);
+  x.fill();
+  x.stroke();
+
+  x.fillStyle=nodeColors[n.type];
+  roundRect(x,px, n.w,35,10);
+  x.fill();
+
+  x.fillStyle="#fff";
+  x.font="14px Arial";
+  x.fillText(nodeIcons[n.type]+" "+n.type.toUpperCase(),px+10,py+23);
+
+  x.fillStyle="#edf3ff";
+  x.font="bold 14px Arial";
+  x.fillText(n.title.substring(0,24),px+10,py+58);
+
+  x.fillStyle="#91a0ba";
+  x.font="11px Arial";
+  x.fillText(n.status.toUpperCase(),px+10,py+78);
+ });
+
+ const a=document.createElement("a");
+ a.download="functionality-map.png";
+ a.href=c.toDataURL("image/png");
+ a.click();
+}
+
+function newProject(){
+ if(!confirm("Start a new project? Current project will be replaced."))return;
+
+ nodes=[];
+ links=[];
+ selected=null;
+
+ document.getElementById("projectName").value="Untitled Project";
+ document.getElementById("projectDescription").value="";
+
+ camera={x:0,y:0,zoom:1};
+
+ updateInspector();
+ updateDashboard();
+ render();
+ autosave();
+}
+
+document.getElementById("projectName").addEventListener("input",()=>{
+ document.getElementById("canvasProjectName").textContent=
+ document.getElementById("projectName").value||"Untitled Project";
+ autosave();
+});
+
+document.getElementById("projectDescription").addEventListener("input",autosave);
+
+window.addEventListener("keydown",e=>{
+ if(e.key==="Delete"||e.key==="Backspace"){
+  const tag=document.activeElement.tagName;
+  if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT")return;
+  deleteSelected();
+ }
+});
+
+const saved=localStorage.getItem("fmap_project");
+
+if(saved){
+ try{
+  loadProject(JSON.parse(saved));
+ }catch(e){}
+}else{
+ camera={x:0,y:0,zoom:1};
+ updateDashboard();
+ render();
+}
+
+resizeCanvas();
+
+</script>
+</body>
+</html>
